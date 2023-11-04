@@ -10,7 +10,7 @@ from Exercices_pile import *
 
 
 #Valeurs couleurs,texte des boutons
-default_font = ("Arial", 25, "bold")
+default_font = ("Arial", 26, "bold")
 button_dict = {"bg": "grey", "fg": "white", "font": default_font}
 grid_dict = {"sticky": "nswe", "padx":10, "pady":10}    
 valeur_ecran = ""

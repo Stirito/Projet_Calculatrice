@@ -80,9 +80,9 @@ def Evaluer(E :str):
 
 
     for el in Clean(E):
-    
+        print(P)
         if el in "*/-+" or el == "**":
-            print(P)
+            
             a1 = float(Depiler(P))
             a2 = float(Depiler(P))
             

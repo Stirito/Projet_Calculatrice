@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 import tkinter as tk 
 from tkinter import messagebox
 from Piles import *
@@ -285,7 +285,7 @@ class Calculatrie(tk.Tk):
 if __name__ == "__main__":
     app = Calculatrie()
     
-=======
+
 import tkinter as tk
 from Piles import *
 
@@ -502,5 +502,5 @@ class Calculatrie(tk.Tk):
 if __name__ == "__main__":
     app = Calculatrie()
     
->>>>>>> bde2ecb6d9eea069fef97386eb9e7cc4444bfecc
+
     app.mainloop()

@@ -502,5 +502,5 @@ class Calculatrie(tk.Tk):
 if __name__ == "__main__":
     app = Calculatrie()
     
-
+    print("deadae")
     app.mainloop()

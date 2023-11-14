@@ -363,7 +363,7 @@ class Calculatrie(tk.Tk):
 
     #Meme fonctionnement que mémoire#
     #Si il y un opérateur ou fonction en dernier element je prendre la deuxieme valeur dans valeur NPI
-    # et je mets la valeur négative (si elle n'est pas deja)
+    # et je mets la valeur l'opposé 
 
     def Negatif(self):
       op = None

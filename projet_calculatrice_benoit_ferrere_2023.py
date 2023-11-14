@@ -125,7 +125,7 @@ class Calculatrie(tk.Tk):
       
       negatif = tk.Button(self,text="-()",**self.button_style)
       negatif.grid(**self.grid_style,column=1,row=7)
-      
+      #BA#
       
       evaluer = tk.Button(self,text="Evaluer",**self.button_style,command=lambda :self.EvaluerNPI())
       evaluer.grid(**self.grid_style,column=2,row=7,columnspan=2)

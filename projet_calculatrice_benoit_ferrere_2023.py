@@ -165,7 +165,7 @@ class Calculatrie(tk.Tk):
       label_Memoire = tk.Label(self, textvariable=self.affichage_memoire, anchor='e',bg="darkred", fg="white", font=self.default_font, padx=10)
       label_Memoire.grid(column=4, row=0,columnspan=4, **self.grid_style)
       
-      #Le bouton zero,virgule et négatif est fait à part car ma petite astuce ne marche pas pour ceux la#
+      #Le bouton zero,virgule et négatif sont fait à part car ma petite astuce ne marche pas pour ceux la#
       #command permet d'appliquer une fonction quand on appuie sur le bouton#
       #lambda n'est pas à comprendre ici réellement il le faut pour pouvoir invoquer la fonction c'est tout#
       zero = tk.Button(self,text="0",**self.button_style,command=lambda :self.AjouterValeurEntree("0"))
@@ -304,11 +304,7 @@ class Calculatrie(tk.Tk):
         self.affichage_NPI.set(self.valeurNPI)
       except ValueError:
         self.Message_Erreur("Domaine Impossible")
-      
-
-    
-        
-    
+   
     #Fonction qui permet d'écrire dans le second affichage vert#
     #je fais change le bool du is_point ce qui permet de ne plus pouvoir écrire si il y en a deja un#
     #j'ajoute à valeur_entree et je l'affiche#
@@ -327,13 +323,12 @@ class Calculatrie(tk.Tk):
       self.valeur_entree = ""
       self.is_point = False
 
-
-    
     #Op = opérateur#
     #Si le dernier element de la pile est un opérateur ou une fonction 
     # je prend pas cette valeur en mémoire mais celle juste avant#
     #is_memoire_plein : permet de vider la mémoire si il y a une valeur de dans sinon la mettre en mémoire
     # quand on appuie sur le bouton M #
+
     def Memoire(self):
       op = None
       if not Pile_Vide(self.valeurNPI) and (is_tout_operateur(self.valeurNPI[-1]) or is_toute_fonction(self.valeurNPI[-1])):
@@ -369,22 +364,26 @@ class Calculatrie(tk.Tk):
     #Meme fonctionnement que mémoire#
     #Si il y un opérateur ou fonction en dernier element je prendre la deuxieme valeur dans valeur NPI
     # et je mets la valeur négative (si elle n'est pas deja)
+
     def Negatif(self):
       op = None
       if not Pile_Vide(self.valeurNPI):
+
         if is_toute_fonction(self.valeurNPI[-1]) or is_tout_operateur(self.valeurNPI[-1]):
+         
           op = Depiler(self.valeurNPI)
         
-        
         valeur = Depiler(self.valeurNPI)
-        if float(valeur) > 0:
-          Empiler(self.valeurNPI,str(-float(valeur)))
-          print(self.valeurNPI,"negatif")
-          self.AfficherValeurNPI()
 
-        if op != None:
+        if op !=  None:
+          
+          Empiler(self.valeurNPI,str(-float(valeur)))
           Empiler(self.valeurNPI,str(op))
-        
+        else:
+            Empiler(self.valeurNPI,str(-float(valeur)))
+     
+        self.AfficherValeurNPI() 
+     
 
     #Je nettoie tout -> Je réinitialise tout#
     #MessageBox permet de créer un pop up #

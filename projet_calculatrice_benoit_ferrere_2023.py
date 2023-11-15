@@ -11,7 +11,7 @@ def is_tout_operateur(el):
 
 #Test de si l'element est une fonction connus. Pareil que is_tout_operateur#
 def is_toute_fonction(el):
-  return el == "cos" or el == "sin" or el =="tan" or el == "exp" or el == "log" or el == "sin-1" or el == "cos-1" or el =="tan-1" or el == "√"
+  return el == "cos" or el == "sin" or el =="tan" or el == "exp" or el == "log" or el == "sin-1" or el == "cos-1" or el =="tan-1" or el == "sqrt"
 
 
 #Evaluer adapté à la calculatrice avec racine,exp,log etc à noter que je fais directement 
@@ -69,7 +69,7 @@ def Evaluer_calculatrice(E :list):
             a = log(a1)
             
               
-          elif el == "√":
+          elif el == "sqrt":
             a = sqrt(a1)
           Empiler(P,a)
         else:
@@ -116,7 +116,7 @@ class Calculatrie(tk.Tk):
         
         self.is_memoire_plein = False
         
-        self.historique = []
+        self.historique = Creer_File()
         #On force la taille des lignes à etre de meme dimension et prendre 100% de l'espace qu'elle peut prendre 
         # -> Ce qui permet que quand on agrandit l'ecran que les boutons s'adaptent à la taille de la fenetre  (C'est pour un confort de l'utilisateur et pratique)#
         #le weight est de 1 car les ligne vertes d'affichage doivent prendre beaucoup plus d'espace que les boutons gris de la calculatrice 123456789#
@@ -215,7 +215,7 @@ class Calculatrie(tk.Tk):
       additionner.grid(**self.grid_style,column=3,row=5)
       
       #Boutons verts
-      racine = tk.Button(self,text="√",**self.button_style_vert,command=lambda: self.AjouterValeurEntree("√") )
+      racine = tk.Button(self,text="√",**self.button_style_vert,command=lambda: self.AjouterValeurEntree("sqrt") )
       racine.grid(**self.grid_style,column=4,row=2)
 
       puissance = tk.Button(self,text="^",**self.button_style_vert,command=lambda: self.AjouterValeurEntree("**") )
@@ -297,15 +297,18 @@ class Calculatrie(tk.Tk):
     #Si erreur de ce domaine la j'envoie un message d'erreur#
 
     def EvaluerNPI(self):
-        
-      self.Ajouter_a_historique(self.valeurNPI)
-      new_valeurNPI = Creer_Pile()
+      
       try:
+        
+        new_valeurNPI = Creer_Pile()
         Empiler(new_valeurNPI,str(Evaluer_calculatrice(self.valeurNPI)))
         self.valeurNPI = new_valeurNPI
         self.affichage_NPI.set(self.valeurNPI)
+        self.Ajouter_a_historique(self.valeurNPI)
       except ValueError:
         self.Message_Erreur("Domaine Impossible")
+      except AssertionError:
+        self.Message_Erreur("Ecriture polonaise non respecté")
    
     #Fonction qui permet d'écrire dans le second affichage vert#
     #je fais change le bool du is_point ce qui permet de ne plus pouvoir écrire si il y en a deja un#
@@ -354,14 +357,14 @@ class Calculatrie(tk.Tk):
         self.AfficherValeurNPI()
         self.is_memoire_plein = False
     
-    #Affiche la mémoire avec un petit texte en "MEMOIRE : " en plus#    
+    #Affiche la mémoire#    
     def AffichageMemoire(self):
-      self.affichage_memoire.set("MEMOIRE : "+str(self.memoire[0]))
+      self.affichage_memoire.set(str(self.memoire[0]))
 
     #Nettoie la memoire comes les autres fonctions NettoyerEntree(),NettoyerNPI()#
     def NettoyerMemoire(self):
       self.memoire = Creer_Pile()
-      self.affichage_memoire.set("MEMOIRE : ")
+      self.affichage_memoire.set("")
 
     #Meme fonctionnement que mémoire#
     #Si il y un opérateur ou fonction en dernier element je prendre la deuxieme valeur dans valeur NPI
@@ -391,6 +394,7 @@ class Calculatrie(tk.Tk):
       bouton_historique = tk.Button(self,text =texte,**self.historique_style,padx=10)
       
       Enfiler(self.historique,bouton_historique)
+      print(self.historique)
       self.Mise_a_Jour_Position_historique()
 
     def Mise_a_Jour_Position_historique(self):
@@ -402,6 +406,9 @@ class Calculatrie(tk.Tk):
       for el in valeurNPI:
         texte+=str(el)+" "
       return texte
+    
+    def Nettoyer_Historique(self):
+      self.historique = Creer_File()
     #Je nettoie tout -> Je réinitialise tout#
     #MessageBox permet de créer un pop up #
     #showerror() permet de faire une pop up d'une erreur#
@@ -409,6 +416,7 @@ class Calculatrie(tk.Tk):
     def Message_Erreur(self,message):
        self.NettoyerEntree()
        self.NettoyerNPI()
+       self.Nettoyer_Historique()
        messagebox.showerror("ERREUR : ",message)
           
 

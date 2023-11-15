@@ -3,13 +3,13 @@ import tkinter as tk
 from tkinter import messagebox
 from Piles import *
 from math import *
-
+from Files import *
 
 #Test de si l'element est un opérateur Cette fonction est juste utile dans le cas de la calculatrice pour eviter de se repeter#
 def is_tout_operateur(el):
   return el in "*/-+" or el == "**"
 
-#Test de si l'elemetn est une fonction connus. Pareil que is_tout_operateur#
+#Test de si l'element est une fonction connus. Pareil que is_tout_operateur#
 def is_toute_fonction(el):
   return el == "cos" or el == "sin" or el =="tan" or el == "exp" or el == "log" or el == "sin-1" or el == "cos-1" or el =="tan-1" or el == "√"
 
@@ -93,7 +93,8 @@ class Calculatrie(tk.Tk):
         self.button_style = {"bg": "#595959", "fg": "white", "highlightthickness": 0, "font": self.default_font}
         self.button_style_vert = {"bg": "#21a80a", "fg": "white", "highlightthickness": 0, "font": self.default_font}
         self.button_style_bleu = {"bg": "#127DEA", "fg": "white", "highlightthickness": 0, "font": self.default_font}
-
+        self.historique_style ={"bg": "#464747", "fg": "white", "highlightthickness": 0, "font": self.default_font}
+        #E8ECEE
 
         #Stockage de la valeur NPI sous forme d'une pile. 
         # tk.StringVar() permet de stocker une variable qui va changer au cours du programme (C'est une ecriture Tkinter à connaitre)#
@@ -112,10 +113,10 @@ class Calculatrie(tk.Tk):
         #is_memore_plein va permettre de vider notre pile ssi on à un element dedans -> elle sert de flag pour ceux qui voient#
         self.memoire = Creer_Pile()
         self.affichage_memoire = tk.StringVar()
-        self.affichage_memoire.set("MEMOIRE : ")
+        
         self.is_memoire_plein = False
         
-        
+        self.historique = []
         #On force la taille des lignes à etre de meme dimension et prendre 100% de l'espace qu'elle peut prendre 
         # -> Ce qui permet que quand on agrandit l'ecran que les boutons s'adaptent à la taille de la fenetre  (C'est pour un confort de l'utilisateur et pratique)#
         #le weight est de 1 car les ligne vertes d'affichage doivent prendre beaucoup plus d'espace que les boutons gris de la calculatrice 123456789#
@@ -137,6 +138,7 @@ class Calculatrie(tk.Tk):
 
         #La memoire prenant plus d'espace d'ou weight = 2 en colonne que les autres
         self.grid_columnconfigure(4, weight=2, uniform="same_group")
+        self.grid_columnconfigure(7, weight=2, uniform="same_group")
 
         #Fonction pour tout regrouper#
         self.creer_bouton()
@@ -162,8 +164,8 @@ class Calculatrie(tk.Tk):
       label_Entree = tk.Label(self, textvariable=self.affichage_entree, anchor='e',bg="darkgreen", fg="white", font=self.default_font, padx=10)
       label_Entree.grid(column=0, row=1, columnspan=4, **self.grid_style)
       
-      label_Memoire = tk.Label(self, textvariable=self.affichage_memoire, anchor='e',bg="darkred", fg="white", font=self.default_font, padx=10)
-      label_Memoire.grid(column=4, row=0,columnspan=4, **self.grid_style)
+      label_Memoire = tk.Label(self, textvariable=self.affichage_memoire, anchor='w',bg="darkred", fg="white", font=self.default_font, padx=10)
+      label_Memoire.grid(column=4, row=0,columnspan=2, **self.grid_style)
       
       #Le bouton zero,virgule et négatif sont fait à part car ma petite astuce ne marche pas pour ceux la#
       #command permet d'appliquer une fonction quand on appuie sur le bouton#
@@ -296,7 +298,7 @@ class Calculatrie(tk.Tk):
 
     def EvaluerNPI(self):
         
-        
+      self.Ajouter_a_historique(self.valeurNPI)
       new_valeurNPI = Creer_Pile()
       try:
         Empiler(new_valeurNPI,str(Evaluer_calculatrice(self.valeurNPI)))
@@ -384,7 +386,22 @@ class Calculatrie(tk.Tk):
      
         self.AfficherValeurNPI() 
      
+    def Ajouter_a_historique(self,valeurNPI):
+      texte = str(self.valeur_npi_en_texte_historique(valeurNPI))
+      bouton_historique = tk.Button(self,text =texte,**self.historique_style,padx=10)
+      
+      Enfiler(self.historique,bouton_historique)
+      self.Mise_a_Jour_Position_historique()
 
+    def Mise_a_Jour_Position_historique(self):
+      for el in self.historique:
+        el.grid(**self.grid_style, columnspan=3,column=7,row=self.historique.index(el))
+    
+    def valeur_npi_en_texte_historique(self,valeurNPI):
+      texte = ""
+      for el in valeurNPI:
+        texte+=str(el)+" "
+      return texte
     #Je nettoie tout -> Je réinitialise tout#
     #MessageBox permet de créer un pop up #
     #showerror() permet de faire une pop up d'une erreur#

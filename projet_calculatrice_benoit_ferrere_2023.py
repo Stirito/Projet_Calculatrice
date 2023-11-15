@@ -11,7 +11,7 @@ def is_tout_operateur(el):
 
 #Test de si l'element est une fonction connus. Pareil que is_tout_operateur#
 def is_toute_fonction(el):
-  return el == "cos" or el == "sin" or el =="tan" or el == "exp" or el == "log" or el == "sin-1" or el == "cos-1" or el =="tan-1" or el == "sqrt"
+  return el == "cos" or el == "sin" or el =="tan" or el == "exp" or el == "log10" or el == "sin-1" or el == "cos-1" or el =="tan-1" or el == "sqrt" or el == "10**" or el=="ln"
 
 
 #Evaluer adapté à la calculatrice avec racine,exp,log etc à noter que je fais directement 
@@ -64,10 +64,12 @@ def Evaluer_calculatrice(E :list):
             a = acos(a1)
           elif el == "exp":
             a = exp(a1)
-          elif el == "log":
+          elif el == "ln":
          
             a = log(a1)
-            
+          elif el == "log10":
+         
+            a = log10(a1)
               
           elif el == "sqrt":
             a = sqrt(a1)
@@ -107,7 +109,7 @@ class Calculatrie(tk.Tk):
         
         #Un bool de is_point qui servira à ne pas pouvoir écrire plusieurs points dans la barre d'entrée#
         self.is_point = False
-        
+        self.is_operateur = False
 
         #Pile de la Mémoire. Pareil que affichage_NPI. La fonction set() permet d'ecrire dans le StringVar() (SEULE MANIERE DE MODIFIER LE STRINGVAR) à connaitre aussi#
         #is_memore_plein va permettre de vider notre pile ssi on à un element dedans -> elle sert de flag pour ceux qui voient#
@@ -165,7 +167,7 @@ class Calculatrie(tk.Tk):
       label_Entree.grid(column=0, row=1, columnspan=4, **self.grid_style)
       
       label_Memoire = tk.Label(self, textvariable=self.affichage_memoire, anchor='w',bg="darkred", fg="white", font=self.default_font, padx=10)
-      label_Memoire.grid(column=4, row=0,columnspan=2, **self.grid_style)
+      label_Memoire.grid(column=4, row=0,columnspan=3, **self.grid_style)
       
       #Le bouton zero,virgule et négatif sont fait à part car ma petite astuce ne marche pas pour ceux la#
       #command permet d'appliquer une fonction quand on appuie sur le bouton#
@@ -224,9 +226,15 @@ class Calculatrie(tk.Tk):
       exponentielle = tk.Button(self,text="exp",**self.button_style_vert,command=lambda: self.AjouterValeurEntree("exp"))
       exponentielle.grid(**self.grid_style,column=4,row=3)
 
-      logarithme = tk.Button(self,text="log",**self.button_style_vert,command=lambda: self.AjouterValeurEntree("log") )
+      logarithme = tk.Button(self,text="log10",**self.button_style_vert,command=lambda: self.AjouterValeurEntree("log10") )
       logarithme.grid(**self.grid_style,column=5,row=3)
 
+      ln = tk.Button(self,text="ln",**self.button_style_vert,command=lambda: self.AjouterValeurEntree("ln") )
+      ln.grid(**self.grid_style,column=7,row=2)
+      
+      puissance_10 = tk.Button(self,text="10**",**self.button_style_vert,command=lambda: self.AjouterValeurEntree("10**") )
+      puissance_10.grid(**self.grid_style,column=7,row=3)
+      
       sin = tk.Button(self,text="sin",**self.button_style_vert,command=lambda: self.AjouterValeurEntree("sin") )
       sin.grid(**self.grid_style,column=4,row=4)
 
@@ -274,7 +282,7 @@ class Calculatrie(tk.Tk):
     def AjouterValeurNPI(self,valeur:str):
       
       Empiler(self.valeurNPI,str(valeur))
-      print(valeur,self.valeurNPI,"calc")
+      
       self.AfficherValeurNPI()
       self.NettoyerEntree()
     
@@ -302,11 +310,13 @@ class Calculatrie(tk.Tk):
         
         new_valeurNPI = Creer_Pile()
         Empiler(new_valeurNPI,str(Evaluer_calculatrice(self.valeurNPI)))
+        self.Ajouter_a_historique(self.valeurNPI)
         self.valeurNPI = new_valeurNPI
         self.affichage_NPI.set(self.valeurNPI)
-        self.Ajouter_a_historique(self.valeurNPI)
+        
+        
       except ValueError:
-        self.Message_Erreur("Domaine Impossible")
+        self.Message_Erreur("Domaine Impossible ou vous avez mal écrit")
       except AssertionError:
         self.Message_Erreur("Ecriture polonaise non respecté")
    
@@ -317,7 +327,11 @@ class Calculatrie(tk.Tk):
     def AjouterValeurEntree(self,valeur):
       if valeur == ".":
         self.is_point = True
+      
       self.valeur_entree+=str(valeur)
+        
+    
+        
       self.affichage_entree.set(self.valeur_entree)
       
     #Pareil que NettoyerNPI#
@@ -394,12 +408,12 @@ class Calculatrie(tk.Tk):
       bouton_historique = tk.Button(self,text =texte,**self.historique_style,padx=10)
       
       Enfiler(self.historique,bouton_historique)
-      print(self.historique)
+      
       self.Mise_a_Jour_Position_historique()
 
     def Mise_a_Jour_Position_historique(self):
       for el in self.historique:
-        el.grid(**self.grid_style, columnspan=3,column=7,row=self.historique.index(el))
+        el.grid(**self.grid_style, columnspan=3,column=8,row=self.historique.index(el))
     
     def valeur_npi_en_texte_historique(self,valeurNPI):
       texte = ""
@@ -427,7 +441,7 @@ class Calculatrie(tk.Tk):
 if __name__ == "__main__":
     app = Calculatrie()
     app.mainloop()
-
+    
 
 
 

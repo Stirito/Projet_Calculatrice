@@ -55,6 +55,7 @@ def Evaluer_calculatrice(E :list):
               
           elif el == "sin":
             a = sin(a1)
+            
           elif el == "tan":
             a = tan(a1)
           elif el == "sin-1":

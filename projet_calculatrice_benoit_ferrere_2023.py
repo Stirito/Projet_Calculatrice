@@ -55,7 +55,7 @@ def Evaluer_calculatrice(E :list):
               
           elif el == "sin":
             a = sin(a1)
-            
+
           elif el == "tan":
             a = tan(a1)
           elif el == "sin-1":
@@ -496,7 +496,8 @@ class Calculatrie(tk.Tk):
       self.NettoyerNPI()
       self.valeurNPI = self.historique[bouton]
       self.AfficherValeurNPI()
-      self.Supprimer_Historique(bouton)
+      indice = list(self.historique.keys()).index(bouton)
+      self.Supprimer_Historique(list(self.historique.keys())[indice])
       self.Mise_a_Jour_Position_historique()
   
     def Supprimer_Historique(self,bouton):
@@ -508,7 +509,7 @@ class Calculatrie(tk.Tk):
               boutons_a_supprimer.append(btn)
           if btn == bouton:
               trouve = True
-              
+              boutons_a_supprimer.append(btn)
       for b in boutons_a_supprimer:
         b.destroy()
         del self.historique[b]
@@ -527,10 +528,7 @@ class Calculatrie(tk.Tk):
     
     def Nettoyer_Historique(self):
       self.historique = {}
-    #Je nettoie tout -> Je réinitialise tout#
-    #MessageBox permet de créer un pop up #
-    #showerror() permet de faire une pop up d'une erreur#
-    #Avec un message passé en paramètre#
+    
     
     def Ajuster_taille(self,label,nombre):
      
@@ -538,6 +536,10 @@ class Calculatrie(tk.Tk):
       taille_police = max(30 - len(str(nombre)),10) 
       label.config(font=("Arial", taille_police,"bold"))
     
+    #Je nettoie tout -> Je réinitialise tout#
+    #MessageBox permet de créer un pop up #
+    #showerror() permet de faire une pop up d'une erreur#
+    #Avec un message passé en paramètre#
 
     def Message_Erreur(self,message):
        self.NettoyerEntree()

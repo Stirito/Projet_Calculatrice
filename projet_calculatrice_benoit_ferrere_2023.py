@@ -70,7 +70,8 @@ def Evaluer_calculatrice(E :list):
           elif el == "log10":
          
             a = log10(a1)
-              
+          elif el == "10**":
+            a = 10**a1
           elif el == "sqrt":
             a = sqrt(a1)
           Empiler(P,a)
@@ -109,7 +110,7 @@ class Calculatrie(tk.Tk):
         
         #Un bool de is_point qui servira à ne pas pouvoir écrire plusieurs points dans la barre d'entrée#
         self.is_point = False
-        self.is_operateur = False
+        
 
         #Pile de la Mémoire. Pareil que affichage_NPI. La fonction set() permet d'ecrire dans le StringVar() (SEULE MANIERE DE MODIFIER LE STRINGVAR) à connaitre aussi#
         #is_memore_plein va permettre de vider notre pile ssi on à un element dedans -> elle sert de flag pour ceux qui voient#
@@ -152,8 +153,8 @@ class Calculatrie(tk.Tk):
       
       #Les Labels sont des espaces pour pouvoir ecrire des choses dedans. 
       # textvariable est obligatoire si vous voulez changer les valeurs durant le programme (NE PAS UTILISER text= qui est DIFFERENT)#
-      #anchor = "e" permet d'encrer notre texte sur le coté est soit droite de notre affichage en vert#
-      #padx c'est les ecarts entre les autres objets de la grid suivant x#
+      #anchor = "e" permet d'encrer notre texte sur le coté "Est" soit à droite de notre affichage en vert#
+      #padx c'est les écarts entre les autres objets de la grid suivant x#
       #bg = background et fg = foreground c'est pour les couleurs
       #font = police police d'ecriture basique
       #columnspan permet de prendre 4 taille de notre grid#
@@ -262,8 +263,8 @@ class Calculatrie(tk.Tk):
 
       #Création des boutons 1,2,3,4,5,6,7,8,9 #
       #Petite Astuce (IMPORTANT SAVOIR BIEN VISUALISER LA GRID POUR COMPRENDRE CELA)#
-      #Je fais une double boucle en commencant en bas a gauche à 1 (d'ou 5-i) et je vais de gauche à droite en augmentant de 1 a chaque fois#
-      #Et je monte de bas en haut d'ou la colonne la plus basse soit j#
+      #Je fais une double boucle en commencant en bas a gauche à 1 (d'ou 5-i) et je vais de bas en haut en augmentant de 1 a chaque fois#
+      #Et je vais de gauche à droite d'ou la colonne la plus basse soit j#
       #Noté : le lambda est différent j'ai affecté un paramètre t qui sera g à chaque passage de boucle#
       #Sans ca le g ne varie pas et cela va vous renvoyer 10 pour chaque bouton#
       
@@ -310,7 +311,8 @@ class Calculatrie(tk.Tk):
         
         new_valeurNPI = Creer_Pile()
         Empiler(new_valeurNPI,str(Evaluer_calculatrice(self.valeurNPI)))
-        self.Ajouter_a_historique(self.valeurNPI)
+        if Premier(new_valeurNPI) != Premier(self.valeurNPI):
+          self.Ajouter_a_historique(self.valeurNPI)
         self.valeurNPI = new_valeurNPI
         self.affichage_NPI.set(self.valeurNPI)
         
@@ -326,14 +328,14 @@ class Calculatrie(tk.Tk):
 
     def AjouterValeurEntree(self,valeur):
       if valeur == ".":
+        
         self.is_point = True
-      
       self.valeur_entree+=str(valeur)
-        
-    
-        
       self.affichage_entree.set(self.valeur_entree)
-      
+    
+    def is_operateur_dans_entree(self):
+      return
+    
     #Pareil que NettoyerNPI#
     #Je remet le paramètre is_point = False car il n'y à plus de point dans la valeur d'entrée#
     def NettoyerEntree(self):
@@ -441,6 +443,7 @@ class Calculatrie(tk.Tk):
 if __name__ == "__main__":
     app = Calculatrie()
     app.mainloop()
+   
     
 
 

@@ -85,11 +85,11 @@ def Evaluer_calculatrice(E :list):
 
 
 #Classe de la calculatrice base du programme en TKINTER #
-class Calculatrie(tk.Tk):
+class Calculatrice(tk.Tk):
     def __init__(self):
         super().__init__()
 
-        #Parametre classique -> Nom de la fenetre, taille, couleur du fond, et style de la grid, des boutons et la police d'écriture#
+        #Paramètre classique -> Nom de la fenêtre, taille, couleur du fond, et style de la grid, des boutons et la police d'écriture#
         self.title("Calculatrice")
         self.geometry("700x700")
         self.config(background="#292929")
@@ -110,7 +110,7 @@ class Calculatrie(tk.Tk):
      
         self.all_boutons = []
         #Stockage de la valeur NPI sous forme d'une pile. 
-        # tk.StringVar() permet de stocker une variable qui va changer au cours du programme (C'est une ecriture Tkinter à connaitre)#
+        # tk.StringVar() permet de stocker une variable qui va changer au cours du programme (C'est une écriture Tkinter à connaitre)#
         self.affichage_NPI = tk.StringVar()
         self.valeurNPI = Creer_Pile()
         
@@ -553,7 +553,7 @@ class Calculatrie(tk.Tk):
 # __name__ == "__main__ permet simplement de lancer un script que si il n'est pas importé en module"
 # Il n'est pas important on pourrait l'enlever#       
 if __name__ == "__main__":
-    app = Calculatrie()
+    app = Calculatrice()
     app.mainloop()
    
     

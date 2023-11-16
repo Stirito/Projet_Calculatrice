@@ -3,7 +3,8 @@ import tkinter as tk
 from tkinter import messagebox
 from Piles import *
 from math import *
-
+import random 
+import string
 
 #Test de si l'element est un opérateur Cette fonction est juste utile dans le cas de la calculatrice pour eviter de se repeter#
 def is_tout_operateur(el):
@@ -93,12 +94,19 @@ class Calculatrie(tk.Tk):
         self.config(background="#292929")
         self.default_font = ("Arial", 26, "bold")
         self.grid_style = {"padx":10, "pady":10,"sticky": "nsew"}   
+        
         self.button_style = {"bg": "#3b3b3b", "fg": "white", "highlightthickness": 0, "font": self.default_font}
-        self.evaluer_style = {"bg": "#202020", "fg": "white", "highlightthickness": 0, "font": self.default_font}
-        self.button_style_operateur = {"bg": "#323232", "fg": "white", "highlightthickness": 0, "font": self.default_font}
-        self.button_style_bleu = {"bg": "#127DEA", "fg": "white", "highlightthickness": 0, "font": self.default_font}
+        
+        self.style_ca_c_m = {"bg": "#3b3b3b", "fg": "white", "highlightthickness": 0, "font": self.default_font}
+        
+        self.style_evaluer_entree = {"bg": "#595959", "fg": "white", "highlightthickness": 0, "font": self.default_font}
+        
+        self.style_operateur_fonction = {"bg": "#323232", "fg": "white", "highlightthickness": 0, "font": self.default_font}
+        
+        self.style_pi_expo = {"bg": "#127DEA", "fg": "white", "highlightthickness": 0, "font": self.default_font}
+        
         self.historique_style ={"bg": "#464747", "fg": "white", "highlightthickness": 0, "font": self.default_font}
-        #E8ECEE
+     
 
         #Stockage de la valeur NPI sous forme d'une pile. 
         # tk.StringVar() permet de stocker une variable qui va changer au cours du programme (C'est une ecriture Tkinter à connaitre)#
@@ -164,102 +172,45 @@ class Calculatrie(tk.Tk):
         self.label_Memoire.grid(column=4, row=0,columnspan=3, **self.grid_style)
         #Fonction pour tout regrouper#
         self.creer_bouton()
-        
-        
+        self.bind_touche()
+    
+    def bind_touche(self):
+      self.bind('<KeyPress>',self.couleur_aleatoire)  
+    
+    def couleur_aleatoire(self,event:tk.Event):
+      if event.char.lower()=='r':
+       
+        self.config(bg=self.generer_couleur_aleatoire())
+        self.button_style["bg"] = self.generer_couleur_aleatoire()
+        self.creer_bouton_chiffre(self.button_style)
+        self.style_operateur_fonction["bg"] = self.generer_couleur_aleatoire()
+        self.creer_bouton_operateur_fonction(self.style_operateur_fonction)
+        self.style_pi_expo["bg"] = self.generer_couleur_aleatoire()
+        self.creer_bouton_expo_pi(self.style_pi_expo)
+        self.style_evaluer_entree["bg"] = self.generer_couleur_aleatoire()
+        self.creer_bouton_evaluer_entree(self.style_evaluer_entree)
+        self.style_ca_c_m["bg"] = self.generer_couleur_aleatoire()
+        self.creer_bouton_ca_c_m(self.style_ca_c_m)
+    def generer_couleur_aleatoire(self):
+   
+      color = '#' + ''.join(random.choices(string.hexdigits[:16], k=6))
+      
+      return color
     def creer_bouton(self):
       #On crée une grid pour baser tout notre affichage et nos boutons dessus#
       self.grid()
       
-      #Le bouton zero,virgule et négatif sont fait à part car ma petite astuce ne marche pas pour ceux la#
-      #command permet d'appliquer une fonction quand on appuie sur le bouton#
-      #lambda n'est pas à comprendre ici réellement il le faut pour pouvoir invoquer la fonction c'est tout#
-      zero = tk.Button(self,text="0",**self.button_style,command=lambda :self.AjouterValeurEntree("0"))
-      zero.grid(**self.grid_style,column=0,row=6)
+      self.creer_bouton_ca_c_m(self.style_ca_c_m)
       
-      virgule = tk.Button(self,text=".",**self.button_style,command=lambda :self.AjouterValeurEntree(".") if self.is_point == False else None)
-      virgule.grid(**self.grid_style,column=1,row=6)
+      self.creer_bouton_evaluer_entree(self.style_evaluer_entree)
+
+    
+      #Bouton opérateurs et fonctions#
       
-      negatif = tk.Button(self,text="-()",**self.button_style,command=lambda:self.Negatif())
-      negatif.grid(**self.grid_style,column=1,row=7)
-      
-
-      #Pareil que tous les boutons en haut#
-      #Ce qui change c'est la fonction du bouton qui lui ai affecté#
-
-      evaluer = tk.Button(self,text="Evaluer",**self.button_style,command=lambda :self.EvaluerNPI())
-      evaluer.grid(**self.grid_style,column=2,row=7,columnspan=2)
-      
-      
-      entree = tk.Button(self,text="Entrée",**self.button_style,command=lambda : self.AjouterValeurNPI(self.valeur_entree))
-      entree.grid(**self.grid_style,column=2,row=6,columnspan=2)
-      
-      M = tk.Button(self,text="M",**self.button_style,command=lambda : self.Memoire())
-      M.grid(**self.grid_style,column=0,row=2)
-      
-      C = tk.Button(self,text="C",**self.button_style,command=lambda : self.NettoyerNPI())
-      C.grid(**self.grid_style,column=1,row=2)
-      
-      CA = tk.Button(self,text="CA",**self.button_style,command=lambda : self.NettoyerEntree())
-      CA.grid(**self.grid_style,column=2,row=2)
-      
-      
-      #Bouton opérateurs#
-      
-      divise = tk.Button(self,text="/",**self.button_style_operateur,command=lambda : self.AjouterValeurEntree("/"))
-      divise.grid(**self.grid_style,column=3,row=2)
-
-      multiplier = tk.Button(self,text="x",**self.button_style_operateur,command=lambda : self.AjouterValeurEntree("*"))
-      multiplier.grid(**self.grid_style,column=3,row=3)
-
-      soustraire = tk.Button(self,text="-",**self.button_style_operateur,command=lambda : self.AjouterValeurEntree("-"))
-      soustraire.grid(**self.grid_style,column=3,row=4)
-
-      additionner = tk.Button(self,text="+",**self.button_style_operateur,command=lambda : self.AjouterValeurEntree("+"))
-      additionner.grid(**self.grid_style,column=3,row=5)
-      
-      #Boutons verts
-      racine = tk.Button(self,text="√",**self.button_style_operateur,command=lambda: self.AjouterValeurEntree("sqrt") )
-      racine.grid(**self.grid_style,column=4,row=2)
-
-      puissance = tk.Button(self,text="^",**self.button_style_operateur,command=lambda: self.AjouterValeurEntree("**") )
-      puissance.grid(**self.grid_style,column=5,row=2)
-
-      exponentielle = tk.Button(self,text="exp",**self.button_style_operateur,command=lambda: self.AjouterValeurEntree("exp"))
-      exponentielle.grid(**self.grid_style,column=4,row=3)
-
-      logarithme = tk.Button(self,text="log10",**self.button_style_operateur,command=lambda: self.AjouterValeurEntree("log10") )
-      logarithme.grid(**self.grid_style,column=5,row=3)
-
-      ln = tk.Button(self,text="ln",**self.button_style_operateur,command=lambda: self.AjouterValeurEntree("ln") )
-      ln.grid(**self.grid_style,column=7,row=2)
-      
-      puissance_10 = tk.Button(self,text="10**",**self.button_style_operateur,command=lambda: self.AjouterValeurEntree("10**") )
-      puissance_10.grid(**self.grid_style,column=7,row=3)
-      
-      sin = tk.Button(self,text="sin",**self.button_style_operateur,command=lambda: self.AjouterValeurEntree("sin") )
-      sin.grid(**self.grid_style,column=4,row=4)
-
-      cos = tk.Button(self,text="cos",**self.button_style_operateur,command=lambda: self.AjouterValeurEntree("cos") )
-      cos.grid(**self.grid_style,column=5,row=4)
-
-      tan = tk.Button(self,text="tan",**self.button_style_operateur,command=lambda: self.AjouterValeurEntree("tan") )
-      tan.grid(**self.grid_style,column=4,row=5)
-
-      arcsin = tk.Button(self,text="sin-1",**self.button_style_operateur,command=lambda: self.AjouterValeurEntree("sin-1"))
-      arcsin.grid(**self.grid_style,column=5,row=5)
-
-      arccos = tk.Button(self,text="cos-1",**self.button_style_operateur,command=lambda: self.AjouterValeurEntree("cos-1"))
-      arccos.grid(**self.grid_style,column=4,row=6)
-
-      arctan = tk.Button(self,text="tan−1",**self.button_style_operateur,command=lambda: self.AjouterValeurEntree("tan-1") )
-      arctan.grid(**self.grid_style,column=5,row=6)
+      self.creer_bouton_operateur_fonction(self.style_operateur_fonction)
 
       #Boutons Bleus#
-      valeur_exponetielle = tk.Button(self,text="e",**self.button_style_bleu,command=lambda: self.AjouterValeurEntree(str(exp(1))) )
-      valeur_exponetielle.grid(**self.grid_style,column=4,row=7)
-
-      valeur_pi = tk.Button(self,text="π",**self.button_style_bleu,command=lambda: self.AjouterValeurEntree(str(pi)) )
-      valeur_pi.grid(**self.grid_style,column=5,row=7)
+      self.creer_bouton_expo_pi(self.style_pi_expo)
 
       #Création des boutons 1,2,3,4,5,6,7,8,9 #
       #Petite Astuce (IMPORTANT SAVOIR BIEN VISUALISER LA GRID POUR COMPRENDRE CELA)#
@@ -267,19 +218,109 @@ class Calculatrie(tk.Tk):
       #Et je vais de gauche à droite d'ou la colonne la plus basse soit j#
       #Noté : le lambda est différent j'ai affecté un paramètre t qui sera g à chaque passage de boucle#
       #Sans ca le g ne varie pas et cela va vous renvoyer 10 pour chaque bouton#
+      #Le bouton zero,virgule et négatif sont fait à part car ma petite astuce ne marche pas pour ceux la#
+      #command permet d'appliquer une fonction quand on appuie sur le bouton#
+      #lambda n'est pas à comprendre ici réellement il le faut pour pouvoir invoquer la fonction c'est tout#
+      
+      self.creer_bouton_chiffre(self.button_style)
+      
+    
+    def creer_bouton_chiffre(self,style_bouton):
+      
+      zero = tk.Button(self,text="0",**style_bouton,command=lambda :self.AjouterValeurEntree("0"))
+      zero.grid(**self.grid_style,column=0,row=6)
+      
+      virgule = tk.Button(self,text=".",**style_bouton,command=lambda :self.AjouterValeurEntree(".") if self.is_point == False else None)
+      virgule.grid(**self.grid_style,column=1,row=6)
+      
+      negatif = tk.Button(self,text="-()",**style_bouton,command=lambda:self.Negatif())
+      negatif.grid(**self.grid_style,column=1,row=7)
       
       g = 1
       for i in range(3):
         
         for j in range(3):
-          bouton_chiffre = tk.Button(self,text =str(g),**self.button_style,command=lambda t= g: self.AjouterValeurEntree(t))
+          bouton_chiffre = tk.Button(self,text =str(g),**style_bouton,command=lambda t= g: self.AjouterValeurEntree(t))
           bouton_chiffre.grid(**self.grid_style,column=j,row=5-i)
           g+=1
+    def creer_bouton_operateur_fonction(self,style_operateur_fonction):
+      divise = tk.Button(self,text="/",**style_operateur_fonction,command=lambda : self.AjouterValeurEntree("/"))
+      divise.grid(**self.grid_style,column=3,row=2)
+
+      multiplier = tk.Button(self,text="x",**style_operateur_fonction,command=lambda : self.AjouterValeurEntree("*"))
+      multiplier.grid(**self.grid_style,column=3,row=3)
+
+      soustraire = tk.Button(self,text="-",**style_operateur_fonction,command=lambda : self.AjouterValeurEntree("-"))
+      soustraire.grid(**self.grid_style,column=3,row=4)
+
+      additionner = tk.Button(self,text="+",**style_operateur_fonction,command=lambda : self.AjouterValeurEntree("+"))
+      additionner.grid(**self.grid_style,column=3,row=5)
       
+      #Boutons verts
+      racine = tk.Button(self,text="√",**style_operateur_fonction,command=lambda: self.AjouterValeurEntree("sqrt") )
+      racine.grid(**self.grid_style,column=4,row=2)
+
+      puissance = tk.Button(self,text="^",**style_operateur_fonction,command=lambda: self.AjouterValeurEntree("**") )
+      puissance.grid(**self.grid_style,column=5,row=2)
+
+      exponentielle = tk.Button(self,text="exp",**style_operateur_fonction,command=lambda: self.AjouterValeurEntree("exp"))
+      exponentielle.grid(**self.grid_style,column=4,row=3)
+
+      logarithme = tk.Button(self,text="log10",**style_operateur_fonction,command=lambda: self.AjouterValeurEntree("log10") )
+      logarithme.grid(**self.grid_style,column=5,row=3)
+
+      ln = tk.Button(self,text="ln",**style_operateur_fonction,command=lambda: self.AjouterValeurEntree("ln") )
+      ln.grid(**self.grid_style,column=7,row=2)
+      
+      puissance_10 = tk.Button(self,text="10**",**style_operateur_fonction,command=lambda: self.AjouterValeurEntree("10**") )
+      puissance_10.grid(**self.grid_style,column=7,row=3)
+      
+      sin = tk.Button(self,text="sin",**style_operateur_fonction,command=lambda: self.AjouterValeurEntree("sin") )
+      sin.grid(**self.grid_style,column=4,row=4)
+
+      cos = tk.Button(self,text="cos",**style_operateur_fonction,command=lambda: self.AjouterValeurEntree("cos") )
+      cos.grid(**self.grid_style,column=5,row=4)
+
+      tan = tk.Button(self,text="tan",**style_operateur_fonction,command=lambda: self.AjouterValeurEntree("tan") )
+      tan.grid(**self.grid_style,column=4,row=5)
+
+      arcsin = tk.Button(self,text="sin-1",**style_operateur_fonction,command=lambda: self.AjouterValeurEntree("sin-1"))
+      arcsin.grid(**self.grid_style,column=5,row=5)
+
+      arccos = tk.Button(self,text="cos-1",**style_operateur_fonction,command=lambda: self.AjouterValeurEntree("cos-1"))
+      arccos.grid(**self.grid_style,column=4,row=6)
+
+      arctan = tk.Button(self,text="tan−1",**style_operateur_fonction,command=lambda: self.AjouterValeurEntree("tan-1") )
+      arctan.grid(**self.grid_style,column=5,row=6)
+      
+    def creer_bouton_expo_pi(self,style_pi_expo):
+      valeur_exponetielle = tk.Button(self,text="e",**style_pi_expo,command=lambda: self.AjouterValeurEntree(str(exp(1))) )
+      valeur_exponetielle.grid(**self.grid_style,column=4,row=7)
+
+      valeur_pi = tk.Button(self,text="π",**style_pi_expo,command=lambda: self.AjouterValeurEntree(str(pi)) )
+      valeur_pi.grid(**self.grid_style,column=5,row=7)
+      
+    def creer_bouton_evaluer_entree(self,style_evaluer):
+      evaluer = tk.Button(self,text="Evaluer",**style_evaluer,command=lambda :self.EvaluerNPI())
+      evaluer.grid(**self.grid_style,column=2,row=7,columnspan=2)
+      
+      
+      entree = tk.Button(self,text="Entrée",**style_evaluer,command=lambda : self.AjouterValeurNPI(self.valeur_entree))
+      entree.grid(**self.grid_style,column=2,row=6,columnspan=2)
+      
+      
+    def creer_bouton_ca_c_m(self,style_ca_c_m):
+      M = tk.Button(self,text="M",**style_ca_c_m,command=lambda : self.Memoire())
+      M.grid(**self.grid_style,column=0,row=2)
+      
+      C = tk.Button(self,text="C",**style_ca_c_m,command=lambda : self.NettoyerNPI())
+      C.grid(**self.grid_style,column=1,row=2)
+      
+      CA = tk.Button(self,text="CA",**style_ca_c_m,command=lambda : self.NettoyerEntree())
+      CA.grid(**self.grid_style,column=2,row=2)
     #Fonction qui empile une valeur passé en paramètre#
     #Qui affiche cette valeur sur le premier écran vert#
     #Qui nettoie l'entrée car sinon ce que vous avez écrit reste sur le deuxième affichage vert#
-
     def AjouterValeurNPI(self,valeur:str):
       
       Empiler(self.valeurNPI,str(valeur))

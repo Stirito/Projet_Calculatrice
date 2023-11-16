@@ -107,7 +107,7 @@ class Calculatrie(tk.Tk):
         
         self.historique_style ={"bg": "#464747", "fg": "white", "highlightthickness": 0, "font": self.default_font}
      
-
+        self.all_boutons = []
         #Stockage de la valeur NPI sous forme d'une pile. 
         # tk.StringVar() permet de stocker une variable qui va changer au cours du programme (C'est une ecriture Tkinter à connaitre)#
         self.affichage_NPI = tk.StringVar()
@@ -181,6 +181,9 @@ class Calculatrie(tk.Tk):
       if event.char.lower()=='r':
        
         self.config(bg=self.generer_couleur_aleatoire())
+
+        self.supprimer_tout_les_boutons()
+
         self.button_style["bg"] = self.generer_couleur_aleatoire()
         self.creer_bouton_chiffre(self.button_style)
         self.style_operateur_fonction["bg"] = self.generer_couleur_aleatoire()
@@ -224,7 +227,11 @@ class Calculatrie(tk.Tk):
       
       self.creer_bouton_chiffre(self.button_style)
       
-    
+    def supprimer_tout_les_boutons(self):
+      for bouton in self.all_boutons:
+        bouton.destroy()
+
+
     def creer_bouton_chiffre(self,style_bouton):
       
       zero = tk.Button(self,text="0",**style_bouton,command=lambda :self.AjouterValeurEntree("0"))
@@ -236,12 +243,17 @@ class Calculatrie(tk.Tk):
       negatif = tk.Button(self,text="-()",**style_bouton,command=lambda:self.Negatif())
       negatif.grid(**self.grid_style,column=1,row=7)
       
+      self.all_boutons.append(zero)
+      self.all_boutons.append(virgule)
+      self.all_boutons.append(negatif)
+
       g = 1
       for i in range(3):
         
         for j in range(3):
           bouton_chiffre = tk.Button(self,text =str(g),**style_bouton,command=lambda t= g: self.AjouterValeurEntree(t))
           bouton_chiffre.grid(**self.grid_style,column=j,row=5-i)
+          self.all_boutons.append(bouton_chiffre)
           g+=1
     def creer_bouton_operateur_fonction(self,style_operateur_fonction):
       divise = tk.Button(self,text="/",**style_operateur_fonction,command=lambda : self.AjouterValeurEntree("/"))
@@ -292,13 +304,19 @@ class Calculatrie(tk.Tk):
 
       arctan = tk.Button(self,text="tan−1",**style_operateur_fonction,command=lambda: self.AjouterValeurEntree("tan-1") )
       arctan.grid(**self.grid_style,column=5,row=6)
-      
+
+
+      self.all_boutons.extend([arctan,arccos,arcsin,cos,sin,tan,puissance_10,ln,logarithme,exponentielle,puissance,racine,multiplier,divise,additionner,soustraire])
+
     def creer_bouton_expo_pi(self,style_pi_expo):
       valeur_exponetielle = tk.Button(self,text="e",**style_pi_expo,command=lambda: self.AjouterValeurEntree(str(exp(1))) )
       valeur_exponetielle.grid(**self.grid_style,column=4,row=7)
 
       valeur_pi = tk.Button(self,text="π",**style_pi_expo,command=lambda: self.AjouterValeurEntree(str(pi)) )
       valeur_pi.grid(**self.grid_style,column=5,row=7)
+
+      self.all_boutons.append(valeur_exponetielle)
+      self.all_boutons.append(valeur_pi)
       
     def creer_bouton_evaluer_entree(self,style_evaluer):
       evaluer = tk.Button(self,text="Evaluer",**style_evaluer,command=lambda :self.EvaluerNPI())
@@ -308,6 +326,8 @@ class Calculatrie(tk.Tk):
       entree = tk.Button(self,text="Entrée",**style_evaluer,command=lambda : self.AjouterValeurNPI(self.valeur_entree))
       entree.grid(**self.grid_style,column=2,row=6,columnspan=2)
       
+      self.all_boutons.append(evaluer)
+      self.all_boutons.append(entree)
       
     def creer_bouton_ca_c_m(self,style_ca_c_m):
       M = tk.Button(self,text="M",**style_ca_c_m,command=lambda : self.Memoire())
@@ -318,6 +338,12 @@ class Calculatrie(tk.Tk):
       
       CA = tk.Button(self,text="CA",**style_ca_c_m,command=lambda : self.NettoyerEntree())
       CA.grid(**self.grid_style,column=2,row=2)
+
+
+      self.all_boutons.append(M)
+      self.all_boutons.append(C)
+      self.all_boutons.append(CA)
+      
     #Fonction qui empile une valeur passé en paramètre#
     #Qui affiche cette valeur sur le premier écran vert#
     #Qui nettoie l'entrée car sinon ce que vous avez écrit reste sur le deuxième affichage vert#

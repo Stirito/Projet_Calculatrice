@@ -121,7 +121,9 @@ class Calculatrice(tk.Tk):
         #Un bool de is_point qui servira à ne pas pouvoir écrire plusieurs points dans la barre d'entrée#
         self.is_point = False
         
-
+        self.valeur_in_entree = False
+        self.operateur_in_entree = False
+        
         #Pile de la Mémoire. Pareil que affichage_NPI. La fonction set() permet d'ecrire dans le StringVar() (SEULE MANIERE DE MODIFIER LE STRINGVAR) à connaitre aussi#
         #is_memore_plein va permettre de vider notre pile ssi on à un element dedans -> elle sert de flag pour ceux qui voient#
         self.memoire = Creer_Pile()
@@ -398,16 +400,29 @@ class Calculatrice(tk.Tk):
     #j'ajoute à valeur_entree et je l'affiche#
 
     def AjouterValeurEntree(self,valeur):
+      is_valeur = False
+      is_operateur = False
+      
       if valeur == ".":
         
         self.is_point = True
-      self.valeur_entree+=str(valeur)
+      if str(valeur) in "0123456789" or str(valeur) == ".":
+        is_valeur = True
+      elif is_tout_operateur(str(valeur)) or is_toute_fonction(str(valeur)):
+        is_operateur = True
+      
+      
+      if is_valeur and self.operateur_in_entree == False:
+        self.valeur_entree+=str(valeur)
+        self.valeur_in_entree = True
+      elif is_operateur and self.valeur_in_entree == False and self.operateur_in_entree == False:
+        self.valeur_entree+=str(valeur)
+        self.operateur_in_entree = True
+      
       
       self.affichage_entree.set(self.valeur_entree)
       self.Ajuster_taille(self.label_Entree,self.valeur_entree)
     
-    def is_operateur_dans_entree(self):
-      return
     
     #Pareil que NettoyerNPI#
     #Je remet le paramètre is_point = False car il n'y à plus de point dans la valeur d'entrée#
@@ -415,6 +430,8 @@ class Calculatrice(tk.Tk):
       self.affichage_entree.set("")
       
       self.valeur_entree = ""
+      self.valeur_in_entree = False
+      self.operateur_in_entree = False
       self.is_point = False
 
     #Op = opérateur#

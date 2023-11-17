@@ -377,6 +377,7 @@ class Calculatrice(tk.Tk):
     #le try except permet de contenir les erreur de valeurs impossible comme log(0) our racine d'un nombre négatif#
     #Si erreur de ce domaine la j'envoie un message d'erreur#
 
+    
     def EvaluerNPI(self):
       
       try:

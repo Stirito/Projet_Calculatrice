@@ -424,7 +424,7 @@ class Calculatrice(tk.Tk):
       if valeur == ".":
         
         self.is_point = True
-      if str(valeur) in "0123456789" or str(valeur) == ".":
+      if str(valeur) in "0123456789" or str(valeur) == "." or str(valeur) == str(exp(1)) or str(valeur) == str(pi):
         is_valeur = True
       elif is_tout_operateur(str(valeur)) or is_toute_fonction(str(valeur)):
         is_operateur = True

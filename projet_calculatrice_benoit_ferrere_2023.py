@@ -152,18 +152,11 @@ class Calculatrice(tk.Tk):
         self.grid_columnconfigure(2, weight=1, uniform="same_group")
         self.grid_columnconfigure(3, weight=1, uniform="same_group")
         
-        #La memoire prenant plus d'espace d'ou weight = 2 en colonne que les autres
+        #La memoire et l'historique prenant plus d'espace d'ou weight = 2 en colonne que les autres
         self.grid_columnconfigure(4, weight=2, uniform="same_group")
         self.grid_columnconfigure(7, weight=2, uniform="same_group")
         
-        #Les Labels sont des espaces pour pouvoir ecrire des choses dedans. 
-        # textvariable est obligatoire si vous voulez changer les valeurs durant le programme (NE PAS UTILISER text= qui est DIFFERENT)#
-        #anchor = "e" permet d'encrer notre texte sur le coté "Est" soit à droite de notre affichage en vert#
-        #padx c'est les écarts entre les autres objets de la grid suivant x#
-        #bg = background et fg = foreground c'est pour les couleurs
-        #font = police police d'ecriture basique
-        #columnspan permet de prendre 4 taille de notre grid#
-        #Pour utiliser grid voyez le comme une grille (NE PAS HESITER A DESSINER POUR COMPRENDRE)
+        #Les Labels sont des espaces pour pouvoir ecrire des choses dedans.
         #en sachant que on commence tout en haut à gauche a (column=0,row =0) -> Comme une matrice#
         
         self.label_Entree = tk.Label(self, textvariable=self.affichage_entree, anchor='e',width=1,bg="#202020", fg="white", font=self.default_font, padx=10)
@@ -172,15 +165,20 @@ class Calculatrice(tk.Tk):
         self.label_NPI = tk.Label(self, textvariable=self.affichage_NPI, anchor='e',bg="#202020",width=1, fg="white", font=self.default_font, padx=10)
         self.label_NPI.grid(column=0, row=0, columnspan=4, **self.grid_style)
         
-        self.label_Memoire = tk.Label(self, textvariable=self.affichage_memoire, anchor='w',width=1,bg="#2C0404", fg="white", font=self.default_font, padx=10)
+        self.label_Memoire = tk.Label(self, textvariable=self.affichage_memoire, anchor='e',width=1,bg="#2C0404", fg="white", font=self.default_font, padx=10)
         self.label_Memoire.grid(column=4, row=0,columnspan=3, **self.grid_style)
+
         #Fonction pour tout regrouper#
+
         self.creer_bouton()
         self.bind_touche()
     
+    #Cette partie du programme est en BONUS. Elle permet d'affecter une fonction à la touche R quand on appuie dessus
     def bind_touche(self):
       self.bind('<KeyPress>',self.couleur_aleatoire)  
     
+
+    #Change la couleur de tous les boutons et le background 
     def couleur_aleatoire(self,event:tk.Event):
       if event.char.lower()=='r':
        
@@ -198,44 +196,46 @@ class Calculatrice(tk.Tk):
         self.creer_bouton_evaluer_entree(self.style_evaluer_entree)
         self.style_ca_c_m["bg"] = self.generer_couleur_aleatoire()
         self.creer_bouton_ca_c_m(self.style_ca_c_m)
+
+
+    #Genere une couleur aleatoire sous for de HEX
+
     def generer_couleur_aleatoire(self):
    
       color = '#' + ''.join(random.choices(string.hexdigits[:16], k=6))
       
       return color
+    
+    #Crée tous les boutons à l'écran
+
     def creer_bouton(self):
       #On crée une grid pour baser tout notre affichage et nos boutons dessus#
       self.grid()
-      
+            
       self.creer_bouton_ca_c_m(self.style_ca_c_m)
       
       self.creer_bouton_evaluer_entree(self.style_evaluer_entree)
-
     
-      #Bouton opérateurs et fonctions#
-      
       self.creer_bouton_operateur_fonction(self.style_operateur_fonction)
-
-      #Boutons Bleus#
+     
       self.creer_bouton_expo_pi(self.style_pi_expo)
 
-      #Création des boutons 1,2,3,4,5,6,7,8,9 #
-      #Petite Astuce (IMPORTANT SAVOIR BIEN VISUALISER LA GRID POUR COMPRENDRE CELA)#
+      self.creer_bouton_chiffre(self.button_style)
+      
+    #Supprime tous les boutons à l'écran pour des soucis d'optimisation il es nécessaire de le faire
+    #Sinon on cree des boutons sur des boutons sans jamais les supprimer
+
+    def supprimer_tout_les_boutons(self):
+      for bouton in self.all_boutons:
+        bouton.destroy()
+
+    #Création des boutons 1,2,3,4,5,6,7,8,9 #
+      
       #Je fais une double boucle en commencant en bas a gauche à 1 (d'ou 5-i) et je vais de bas en haut en augmentant de 1 a chaque fois#
       #Et je vais de gauche à droite d'ou la colonne la plus basse soit j#
       #Noté : le lambda est différent j'ai affecté un paramètre t qui sera g à chaque passage de boucle#
       #Sans ca le g ne varie pas et cela va vous renvoyer 10 pour chaque bouton#
       #Le bouton zero,virgule et négatif sont fait à part car ma petite astuce ne marche pas pour ceux la#
-      #command permet d'appliquer une fonction quand on appuie sur le bouton#
-      #lambda n'est pas à comprendre ici réellement il le faut pour pouvoir invoquer la fonction c'est tout#
-      
-      self.creer_bouton_chiffre(self.button_style)
-      
-    def supprimer_tout_les_boutons(self):
-      for bouton in self.all_boutons:
-        bouton.destroy()
-
-
     def creer_bouton_chiffre(self,style_bouton):
       
       zero = tk.Button(self,text="0",**style_bouton,command=lambda :self.AjouterValeurEntree("0"))
@@ -247,6 +247,8 @@ class Calculatrice(tk.Tk):
       negatif = tk.Button(self,text="-()",**style_bouton,command=lambda:self.Negatif())
       negatif.grid(**self.grid_style,column=1,row=7)
       
+
+      #On les ajoute a tous les boutons pour les supprimer aprés
       self.all_boutons.append(zero)
       self.all_boutons.append(virgule)
       self.all_boutons.append(negatif)
@@ -259,6 +261,10 @@ class Calculatrice(tk.Tk):
           bouton_chiffre.grid(**self.grid_style,column=j,row=5-i)
           self.all_boutons.append(bouton_chiffre)
           g+=1
+
+
+    #Crée tous les boutons opérateurs, fonction en les associant à la bonne grid
+
     def creer_bouton_operateur_fonction(self,style_operateur_fonction):
       divise = tk.Button(self,text="/",**style_operateur_fonction,command=lambda : self.AjouterValeurEntree("/"))
       divise.grid(**self.grid_style,column=3,row=2)
@@ -272,7 +278,7 @@ class Calculatrice(tk.Tk):
       additionner = tk.Button(self,text="+",**style_operateur_fonction,command=lambda : self.AjouterValeurEntree("+"))
       additionner.grid(**self.grid_style,column=3,row=5)
       
-      #Boutons verts
+      #Boutons fonctions
       racine = tk.Button(self,text="√",**style_operateur_fonction,command=lambda: self.AjouterValeurEntree("sqrt") )
       racine.grid(**self.grid_style,column=4,row=2)
 
@@ -309,9 +315,10 @@ class Calculatrice(tk.Tk):
       arctan = tk.Button(self,text="tan−1",**style_operateur_fonction,command=lambda: self.AjouterValeurEntree("tan-1") )
       arctan.grid(**self.grid_style,column=5,row=6)
 
-
+      #Pareil pour supprimer tous les boutons après
       self.all_boutons.extend([arctan,arccos,arcsin,cos,sin,tan,puissance_10,ln,logarithme,exponentielle,puissance,racine,multiplier,divise,additionner,soustraire])
 
+    #Crée les boutons expo(1) et pi
     def creer_bouton_expo_pi(self,style_pi_expo):
       valeur_exponetielle = tk.Button(self,text="e",**style_pi_expo,command=lambda: self.AjouterValeurEntree(str(exp(1))) )
       valeur_exponetielle.grid(**self.grid_style,column=4,row=7)
@@ -319,9 +326,11 @@ class Calculatrice(tk.Tk):
       valeur_pi = tk.Button(self,text="π",**style_pi_expo,command=lambda: self.AjouterValeurEntree(str(pi)) )
       valeur_pi.grid(**self.grid_style,column=5,row=7)
 
+      #Toujours pour les supprimer après 
       self.all_boutons.append(valeur_exponetielle)
       self.all_boutons.append(valeur_pi)
       
+    #Crée les boutons evaluer, entree
     def creer_bouton_evaluer_entree(self,style_evaluer):
       evaluer = tk.Button(self,text="Evaluer",**style_evaluer,command=lambda :self.EvaluerNPI())
       evaluer.grid(**self.grid_style,column=2,row=7,columnspan=2)
@@ -330,9 +339,11 @@ class Calculatrice(tk.Tk):
       entree = tk.Button(self,text="Entrée",**style_evaluer,command=lambda : self.AjouterValeurNPI(self.valeur_entree))
       entree.grid(**self.grid_style,column=2,row=6,columnspan=2)
       
+      #Pour les supprimer quand on change de couleur 
       self.all_boutons.append(evaluer)
       self.all_boutons.append(entree)
-      
+    
+    #Cree les boutons CA,M,C 
     def creer_bouton_ca_c_m(self,style_ca_c_m):
       M = tk.Button(self,text="M",**style_ca_c_m,command=lambda : self.Memoire())
       M.grid(**self.grid_style,column=0,row=2)
@@ -349,7 +360,7 @@ class Calculatrice(tk.Tk):
       self.all_boutons.append(CA)
       
     #Fonction qui empile une valeur passé en paramètre#
-    #Qui affiche cette valeur sur le premier écran vert#
+    #Qui affiche cette valeur sur le premier écran gris#
     #Qui nettoie l'entrée car sinon ce que vous avez écrit reste sur le deuxième affichage vert#
     def AjouterValeurNPI(self,valeur:str):
       
@@ -377,16 +388,18 @@ class Calculatrice(tk.Tk):
     #le new_valeurNPI permet d'update la nouvelle pile pour garder la pile évalué après en affichage#
     #le try except permet de contenir les erreur de valeurs impossible comme log(0) our racine d'un nombre négatif#
     #Si erreur de ce domaine la j'envoie un message d'erreur#
+    #Si la valeur evaluer est différente de celle dans le premier ecran gris on l'ajoute à l'historique
 
-    
     def EvaluerNPI(self):
       
       try:
         
         new_valeurNPI = Creer_Pile()
         Empiler(new_valeurNPI,str(Evaluer_calculatrice(self.valeurNPI)))
+
         if Premier(new_valeurNPI) != Premier(self.valeurNPI):
           self.Ajouter_a_historique(self.valeurNPI)
+
         self.valeurNPI = new_valeurNPI
         self.affichage_NPI.set(self.valeurNPI)
         self.Ajuster_taille(self.label_NPI,self.valeurNPI)
@@ -397,8 +410,11 @@ class Calculatrice(tk.Tk):
       except AssertionError:
         self.Message_Erreur("Ecriture polonaise non respecté")
    
-    #Fonction qui permet d'écrire dans le second affichage vert#
+    #Fonction qui permet d'écrire dans le second affichage gris#
     #je fais change le bool du is_point ce qui permet de ne plus pouvoir écrire si il y en a deja un#
+    #is_operateur et is_valeur sontr des contraintes pour ne pas pouvoir écrire 3/ ou sin3 qui donerait une erreur d'écriture
+    #Si la valeur q'uon veut entrer est une valeur et que dans l'entree il y a une valeur alors on peut l'ajouter
+    #ou sinon on peut rajouter q'un operateur si l'entree est vide
     #j'ajoute à valeur_entree et je l'affiche#
 
     def AjouterValeurEntree(self,valeur):
@@ -417,6 +433,7 @@ class Calculatrice(tk.Tk):
       if is_valeur and self.operateur_in_entree == False:
         self.valeur_entree+=str(valeur)
         self.valeur_in_entree = True
+        
       elif is_operateur and self.valeur_in_entree == False and self.operateur_in_entree == False:
         self.valeur_entree+=str(valeur)
         self.operateur_in_entree = True
@@ -501,6 +518,8 @@ class Calculatrice(tk.Tk):
      
         self.AfficherValeurNPI() 
      
+
+    #Ajoute un bouton avec une valeurNPI enregistré sur ce bouton aux dictionnaires de self.historique
     def Ajouter_a_historique(self,valeurNPI):
       texte = str(self.valeur_npi_en_texte_historique(valeurNPI))
       bouton_historique = tk.Button(self,text =texte,**self.historique_style,padx=10)
@@ -511,6 +530,9 @@ class Calculatrice(tk.Tk):
       
       self.Mise_a_Jour_Position_historique()
 
+    #Fonction qui permet quand on appuie sur un bouton de l'historique de 
+    #revenir a cette valeur dans le premier affichage gris tout en supprimant toute les étapes juste avant celle appuyé dans l'historique
+
     def Mettre_Historique_dans_NPI(self,bouton):
       self.NettoyerNPI()
       self.valeurNPI = self.historique[bouton]
@@ -519,6 +541,7 @@ class Calculatrice(tk.Tk):
       self.Supprimer_Historique(list(self.historique.keys())[indice])
       self.Mise_a_Jour_Position_historique()
   
+    #Supprime tous les boutons qui sont au dessus du bouton appuyé dont lui même  
     def Supprimer_Historique(self,bouton):
       boutons_a_supprimer = []
       trouve = False
@@ -534,21 +557,24 @@ class Calculatrice(tk.Tk):
         del self.historique[b]
         
    
+    #Met a jour la position dans l'historique des boutons pour la derniere entree soit tout en haut comme une File   
     def Mise_a_Jour_Position_historique(self):
       
       for (bouton,valeurNPI) in self.historique.items():
         bouton.grid(**self.grid_style, columnspan=3,column=8,row=list(self.historique.items())[::-1].index((bouton,valeurNPI)))
     
+    #Met la valeur NPI associé au bouton sous forme de texte
     def valeur_npi_en_texte_historique(self,valeurNPI):
       texte = ""
       for el in valeurNPI:
         texte+=str(el)+" "
       return texte
     
+    #Nettoie l'historique
     def Nettoyer_Historique(self):
       self.historique = {}
     
-    
+    #Ajuste la taille pour eviter les problemes de dépassement 
     def Ajuster_taille(self,label,nombre):
      
   

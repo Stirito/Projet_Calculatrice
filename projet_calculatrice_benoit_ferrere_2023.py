@@ -114,6 +114,7 @@ class Calculatrice(tk.Tk):
         self.affichage_NPI = tk.StringVar()
         self.valeurNPI = Creer_Pile()
         
+        
         #Pareil mais pour l'affiche de l'entrée#
         self.affichage_entree = tk.StringVar()
         self.valeur_entree = ""
@@ -148,7 +149,7 @@ class Calculatrice(tk.Tk):
         self.grid_columnconfigure(1, weight=1, uniform="same_group")
         self.grid_columnconfigure(2, weight=1, uniform="same_group")
         self.grid_columnconfigure(3, weight=1, uniform="same_group")
-
+        
         #La memoire prenant plus d'espace d'ou weight = 2 en colonne que les autres
         self.grid_columnconfigure(4, weight=2, uniform="same_group")
         self.grid_columnconfigure(7, weight=2, uniform="same_group")

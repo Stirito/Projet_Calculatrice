@@ -92,6 +92,7 @@ class Calculatrice(tk.Tk):
         #Paramètre classique -> Nom de la fenêtre, taille, couleur du fond, et style de la grid, des boutons et la police d'écriture#
         self.title("Calculatrice")
         self.geometry("700x700")
+        
         self.config(background="#292929")
         self.default_font = ("Arial", 26, "bold")
         self.grid_style = {"padx":10, "pady":10,"sticky": "nsew"}   
